@@ -1,0 +1,11 @@
+﻿  AddStudent.cpp
+  Erasmus.cpp
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(204): warning C4101: 'myReader': unreferenced local variable
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(217): warning C4101: 'myReader': unreferenced local variable
+  Generating Code...
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(153): warning C4715: 'ErasmusPRJ::AddStudent::getUni': not all control paths return a value
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(224): warning C4715: 'ErasmusPRJ::AddStudent::getLastID': not all control paths return a value
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(153): warning C4715: 'ErasmusPRJ::AddStudent::getUni': not all control paths return a value
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(224): warning C4715: 'ErasmusPRJ::AddStudent::getLastID': not all control paths return a value
+  ErasmusPRJ.vcxproj -> D:\Scoala\Anul2\Sem1\POO\Proiect\Test\Interfata Final\ErasmusPRJ\Debug\ErasmusPRJ.exe
+  ErasmusPRJ.vcxproj -> D:\Scoala\Anul2\Sem1\POO\Proiect\Test\Interfata Final\ErasmusPRJ\Debug\ErasmusPRJ.pdb (Full PDB)
