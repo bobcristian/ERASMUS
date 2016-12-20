@@ -28,10 +28,13 @@ namespace ErasmusPRJ {
 		UpdateStudent(String^ editString,System::Windows::Forms::Form^ ers)
 		{
 			InitializeComponent();
+			addYears();
+			fillSource();
 			toEdit = editString;
 			populate();
 			//erasmus =(ErasmusPRJ::Erasmus^) ers;
 		}
+
 	private: System::Windows::Forms::TextBox^  ECTSTextBox;
 	public:
 	private: System::Windows::Forms::Label^  label10;
@@ -76,26 +79,76 @@ namespace ErasmusPRJ {
 
 	protected:
 
-
-
-
-
-
-
-
-
-
 	private: System::Windows::Forms::Button^  UpdateButton;
 	private: String^ conString = L"datasource=localhost;port=3306;username=root;password=bobcrisaudir8;";
 
 
 	private:
 
+		void addYears()
+		{
+			for (int i = 2016; i > (2016 - 80); i--)
+			{
+				YearComboBox->Items->Add(System::Convert::ToString(i));
+			}
+		}
+
+		array<String^>^ date;
+		void getDate()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select Data_nastere from erasmus.elevi where ID='" + toEdit + "';", conDataBase);
+			MySqlDataReader^ myReader;
+			String^ toParse;
+			
+
+			try
+			{
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+				myReader->Read();
+
+				toParse = myReader->GetString("Data_nastere");
+				date = toParse->Split('-');
+			}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		String^ getCode(String^ uni)
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.universitati where Universitatea='" + uni + "';", conDataBase);
+			MySqlDataReader^ myReader;
+			String^ toReturn="2";
+			
+			try
+			{
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+				
+				while (myReader->Read())
+				{
+					toReturn = myReader->GetString("Cod_acord");
+					return toReturn;
+				}
+			}
+			catch(Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		int semester;
 		void populate()
 		{
 			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
 			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.elevi where ID='" + toEdit + "';", conDataBase);
 			MySqlDataReader^ myReader;
+			String^ uni;
+			array<String^>^ courses;
 
 			try {
 				conDataBase->Open();
@@ -105,21 +158,47 @@ namespace ErasmusPRJ {
 				{
 					NumeTextBox->Text = myReader->GetString("Nume");
 					PrenumeTextBox->Text = myReader->GetString("Prenume");
-					FacultateTextBox->Text = myReader->GetString("Facultatea");
+
+					getDate();
+					DayComboBox->Text = date[2];
+					MonthComboBox->Text = date[1];
+					YearComboBox->Text = date[0];
 					TaraTextBox->Text = myReader->GetString("Tara_provenienta");
+
+					uni = myReader->GetString("Universitate_prov");
+					CodTextBox->Text = getCode(uni);
+
 					MailTextBox->Text = myReader->GetString("Mail");
+					FacultateTextBox->Text = myReader->GetString("Facultatea");
+
 					DurataTextBox->Text = myReader->GetString("Durata_stagiu");
 					ObservatiiTextBox->Text = myReader->GetString("Observatii");
 
-					if (myReader->GetInt32("Semestru") == 2)
+					semester = myReader->GetInt32("Semestru") % 2;
+					if (semester==0)
 					{
+						S2RadioButton->Checked = true;
 						S2RadioButton->PerformClick();
+
 					}
 					else
 					{
+						S1RadioButton->Checked = true;
 						S1RadioButton->PerformClick();
 					}
 
+					//check courses
+
+					courses = myReader->GetString("Catalog")->Split('/');
+					for (int i = 0; i < CursuriCheckedListBox->Items->Count; i++)
+					{
+						CursuriCheckedListBox->SetItemCheckState(i, System::Windows::Forms::CheckState::Unchecked);
+						for (int j = 0; j < courses->Length ; j++)
+							if (courses[j]->Equals(CursuriCheckedListBox->Items[i]->ToString()))
+								CursuriCheckedListBox->SetItemCheckState(i, System::Windows::Forms::CheckState::Checked);
+					}
+
+					getECTS();
 				}
 			}
 			catch (Exception^ ex)
@@ -127,6 +206,269 @@ namespace ErasmusPRJ {
 				MessageBox::Show(ex->Message);
 			}
 		}
+
+		void getECTS()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.catalog", conDataBase);
+			MySqlDataReader^ myReader;
+			int sum = 0;
+
+			try
+			{
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+				while (myReader->Read())
+				{
+					String^ course = "";
+
+					for (int i = 0; i < CursuriCheckedListBox->CheckedItems->Count; i++)
+					{
+						course = CursuriCheckedListBox->CheckedItems[i]->ToString();
+						if (myReader->GetString("Nume_curs")->Equals(course))
+							sum += myReader->GetInt32("ECTS");
+					}
+				}
+
+				ECTSTextBox->Text = System::Convert::ToString(sum);
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show(ex->Message);
+			}
+			
+		}
+
+		void showCursuri()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.catalog", conDataBase);
+			MySqlDataReader^ myReader;
+			String^ toParse;
+			array<String^>^ code;
+			int sem;
+
+			try {
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+				while (myReader->Read())
+				{
+					toParse = myReader->GetString("Cod_curs");
+					code = toParse->Split('.');
+					sem = System::Convert::ToInt32(code[3]);
+
+					sem = sem % 2;
+					if (sem == semester)
+					{
+						CursuriCheckedListBox->Items->Add(myReader->GetString("Nume_curs"));
+					}
+				}
+			}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+
+		}
+
+		String^ getUni()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select Universitatea,Cod_acord from erasmus.universitati", conDataBase);
+			MySqlDataReader^ myReader;
+			String^ uni = "";
+
+			try {
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+				while (myReader->Read())
+				{
+					if (CodTextBox->Text->Equals(myReader->GetString("Cod_acord")))
+						uni = myReader->GetString("Universitatea");
+				}
+
+				return uni;
+
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		String^ getCourses()//cursurile studentului
+		{
+			String^ courses = "";
+
+			for (int i = 0; i < CursuriCheckedListBox->CheckedItems->Count; i++)
+			{
+				courses += CursuriCheckedListBox->CheckedItems[i]->ToString();
+				courses += "/";
+			}
+
+			return courses;
+		}
+
+		void addStudentToCatalog()
+		{
+			array<String^>^ concatStudents = gcnew array<String^>(40);
+			String^ studentToAdd = "";
+			int uniID = 1;
+			int lastID = System::Convert::ToInt32(toEdit);
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.catalog", conDataBase);
+			MySqlCommand^ updateCatalog = gcnew MySqlCommand("update erasmus.catalog SET Studenti='" + studentToAdd + "' where ID=" + uniID + ";", conDataBase);
+			MySqlDataReader^ myReader;
+			MySqlDataReader^ update;
+			int courses[40];
+			int k = 0;
+
+			try
+			{
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+
+				int idCurs;
+				while (myReader->Read())
+				{
+					String^ course = "";
+
+					for (int i = 0; i < CursuriCheckedListBox->CheckedItems->Count; i++)
+					{
+						course = CursuriCheckedListBox->CheckedItems[i]->ToString();
+						idCurs = myReader->GetInt32("ID");
+						if (myReader->GetString("Nume_curs")->Equals(course))
+						{
+							courses[k] = idCurs;
+							concatStudents[k++] = myReader->GetString("Studenti");
+						}
+					}//Pregateste studentii deja existenti la cursul respectiv
+
+				}
+
+				conDataBase->Close();
+				myReader->Close();//Se inchide prima conexiune
+			}
+			catch (Exception^ ex) {
+				MessageBox::Show(ex->Message);
+			}
+
+			conDataBase->Open();
+			String^ stud;
+			stud =System::Convert::ToString(lastID) + "/";
+			for (int i = 0; i < k; i++)
+			{
+				try
+				{
+
+
+					studentToAdd = concatStudents[i] + stud;
+					uniID = courses[i];
+					MySqlCommand^ updateCatalog = gcnew MySqlCommand("update erasmus.catalog SET Studenti='" + studentToAdd + "' where ID=" + uniID + ";", conDataBase);
+					update = updateCatalog->ExecuteReader();//comanda trebuie reinitializata pt fiecare curs la care se adauga
+					update->Read();							//studentul respectiv
+					update->Close();//se inchide reader-ul pentru a putea lua alta comanda
+				}
+				catch (Exception^ ex)
+				{
+					MessageBox::Show(ex->Message);
+				}
+			}
+		}
+
+		String^ getTara()
+		{
+			String^ toParse;
+			array<String^>^ code;
+
+
+			toParse = CodTextBox->Text;
+			code = toParse->Split(' ');
+			return code[0];
+
+		}
+
+		void fillSource()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.universitati;", conDataBase);
+			MySqlDataReader^ myReader;
+
+			try {
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+
+				while (myReader->Read())
+				{
+					CodTextBox->AutoCompleteCustomSource->Add(myReader->GetString("Cod_acord"));
+				}
+			}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+		}
+
+		void removeFromCourses()
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			//Variabile{
+			String^ studentID = toEdit;
+			studentID = studentID + "/";
+			array<String^>^ studCatalog = gcnew array<String^>(100);
+			String^ studToRemove = "";
+			int course[20];
+			int n = 0;
+			int index;
+			bool found;
+			//}
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.catalog;", conDataBase);
+			MySqlDataReader^ myReader;
+
+			try {
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+				while (myReader->Read())
+				{
+					studToRemove = myReader->GetString("Studenti");
+					found = studToRemove->Contains(studentID);
+					if (found)
+					{
+						index = studToRemove->IndexOf(studentID);
+						studCatalog[n] = studToRemove->Remove(index, 3);
+						course[n++] = myReader->GetInt32("ID");
+					}	//retine cursurile la care e inscris studentul si ii sterge ID-ul
+				}
+			}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+			conDataBase->Close();
+			myReader->Close();
+			//se inchice prima conexiune
+
+			conDataBase->Open();//se deschide conexiunea pentru a updata baza de date
+			MySqlDataReader^ update;
+			for (int i = 0; i < n; i++) {
+				try
+				{
+					MySqlCommand^ updateDataBase = gcnew MySqlCommand("update erasmus.catalog SET Studenti='" + studCatalog[i] + "' where ID=" + course[i] + ";", conDataBase);
+					update = updateDataBase->ExecuteReader();
+					update->Read();
+					update->Close();//se inchide reader-ul
+				}
+				catch (Exception^ ex)
+				{
+					MessageBox::Show(ex->Message);
+				}
+			}//for pentru a parcurge toate cursurile la care e inscris studentul care trebuie sters;
+		}
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -221,6 +563,7 @@ namespace ErasmusPRJ {
 			this->CursuriCheckedListBox->Name = L"CursuriCheckedListBox";
 			this->CursuriCheckedListBox->Size = System::Drawing::Size(201, 184);
 			this->CursuriCheckedListBox->TabIndex = 23;
+			this->CursuriCheckedListBox->Leave += gcnew System::EventHandler(this, &UpdateStudent::CursuriCheckedListBox_Leave);
 			// 
 			// SemesterGroupBox
 			// 
@@ -243,6 +586,7 @@ namespace ErasmusPRJ {
 			this->S2RadioButton->TabStop = true;
 			this->S2RadioButton->Text = L"Semestrul 2";
 			this->S2RadioButton->UseVisualStyleBackColor = true;
+			this->S2RadioButton->CheckedChanged += gcnew System::EventHandler(this, &UpdateStudent::S2RadioButton_CheckedChanged);
 			// 
 			// S1RadioButton
 			// 
@@ -254,6 +598,7 @@ namespace ErasmusPRJ {
 			this->S1RadioButton->TabStop = true;
 			this->S1RadioButton->Text = L"Semestrul 1";
 			this->S1RadioButton->UseVisualStyleBackColor = true;
+			this->S1RadioButton->CheckedChanged += gcnew System::EventHandler(this, &UpdateStudent::S1RadioButton_CheckedChanged);
 			// 
 			// DataGroupBox
 			// 
@@ -285,7 +630,7 @@ namespace ErasmusPRJ {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(6, 99);
+			this->label9->Location = System::Drawing::Point(5, 124);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(29, 13);
 			this->label9->TabIndex = 19;
@@ -293,7 +638,7 @@ namespace ErasmusPRJ {
 			// 
 			// TaraTextBox
 			// 
-			this->TaraTextBox->Location = System::Drawing::Point(69, 96);
+			this->TaraTextBox->Location = System::Drawing::Point(69, 121);
 			this->TaraTextBox->Name = L"TaraTextBox";
 			this->TaraTextBox->Size = System::Drawing::Size(126, 20);
 			this->TaraTextBox->TabIndex = 18;
@@ -362,7 +707,7 @@ namespace ErasmusPRJ {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(5, 120);
+			this->label4->Location = System::Drawing::Point(5, 98);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(26, 13);
 			this->label4->TabIndex = 9;
@@ -417,10 +762,13 @@ namespace ErasmusPRJ {
 			// 
 			// CodTextBox
 			// 
-			this->CodTextBox->Location = System::Drawing::Point(69, 121);
+			this->CodTextBox->AutoCompleteMode = System::Windows::Forms::AutoCompleteMode::Suggest;
+			this->CodTextBox->AutoCompleteSource = System::Windows::Forms::AutoCompleteSource::CustomSource;
+			this->CodTextBox->Location = System::Drawing::Point(69, 95);
 			this->CodTextBox->Name = L"CodTextBox";
 			this->CodTextBox->Size = System::Drawing::Size(126, 20);
 			this->CodTextBox->TabIndex = 4;
+			this->CodTextBox->Leave += gcnew System::EventHandler(this, &UpdateStudent::CodTextBox_Leave);
 			// 
 			// PrenumeTextBox
 			// 
@@ -464,11 +812,14 @@ namespace ErasmusPRJ {
 	private: System::Void NumeTextBox_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	}
 	private: System::Void UpdateButton_Click(System::Object^  sender, System::EventArgs^  e) {
-		/*MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
-		MySqlCommand^ cmdDataBase = gcnew MySqlCommand("update erasmus.elevi SET Nume='"+NumeTextBox->Text+"',Prenume='" + PrenumeTextBox->Text + "',CNP='" + CNPTextBox->Text + "',Tara_provenienta='" + TaraTextBox->Text + "',Mail='" + MailTextBox->Text + "' where ID='" + toEdit + "';", conDataBase);
+		MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+		String^ dateToAdd = YearComboBox->Text + "-" + MonthComboBox->Text + "-" + DayComboBox->Text;
+		MySqlCommand^ cmdDataBase = gcnew MySqlCommand("update erasmus.elevi SET Nume='"+NumeTextBox->Text+"',Prenume='" + PrenumeTextBox->Text + "',Data_nastere='" + dateToAdd + "',Tara_provenienta='" + TaraTextBox->Text + "',Mail='" + MailTextBox->Text + "',Universitate_prov='" + getUni() + "',Catalog='" + getCourses() + "',Durata_stagiu='" + DurataTextBox->Text + "',Semestru='" + System::Convert::ToString(semester) + "',Observatii='" + ObservatiiTextBox->Text + "',Facultatea='" + FacultateTextBox->Text + "' where ID='" + toEdit + "';", conDataBase);
 		MySqlDataReader^ myReader;
 
 			try {
+				removeFromCourses();
+				addStudentToCatalog();
 				conDataBase->Open();
 				myReader = cmdDataBase->ExecuteReader();
 				myReader->Read();
@@ -483,11 +834,45 @@ namespace ErasmusPRJ {
 			catch (Exception^ ex)
 			{
 				MessageBox::Show(ex->Message);
-			}*/
+			}
 		}
 
 	
 private: System::Void UpdateStudent_Load(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void S1RadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	CursuriCheckedListBox->Items->Clear();
+	showCursuri();
+}
+private: System::Void S2RadioButton_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	CursuriCheckedListBox->Items->Clear();
+	showCursuri();
+}
+private: System::Void CursuriCheckedListBox_Leave(System::Object^  sender, System::EventArgs^  e) {
+	getECTS();
+}
+private: System::Void CodTextBox_Leave(System::Object^  sender, System::EventArgs^  e) {
+	MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+	MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.tari where Cod_tara='" + getTara() + "';", conDataBase);
+	MySqlDataReader^ myReader;
+	String^ toParse;
+	array<String^>^ code;
+
+	try {
+		conDataBase->Open();
+		myReader = cmdDataBase->ExecuteReader();
+
+		while (myReader->Read())
+		{
+			toParse = CodTextBox->Text;
+			code = toParse->Split(' ');
+			TaraTextBox->Text = myReader->GetString("Nume_tara");
+		}
+	}
+	catch (Exception^ ex)
+	{
+		MessageBox::Show(ex->Message);
+	}
 }
 };
 }
