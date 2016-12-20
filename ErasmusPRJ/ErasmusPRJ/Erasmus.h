@@ -24,7 +24,7 @@ namespace ErasmusPRJ {
 			//
 			//TODO: Add the constructor code here
 			//
-			ShowButton->Hide();
+			ShowComboBox->Text = "Elevi";
 		}
 
 	protected:
@@ -63,6 +63,62 @@ namespace ErasmusPRJ {
 			catch (Exception^ ex) {
 				MessageBox::Show(ex->Message);
 			}
+		}
+
+		void removeFromCourses(String^ studentID)
+		{
+			MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
+			//Variabile{
+			studentID = studentID + "/";
+			array<String^>^ studCatalog = gcnew array<String^>(100);
+			String^ studToRemove = "";
+			int course[20];
+			int n = 0;
+			int index;
+			bool found;
+			//}
+			MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select * from erasmus.catalog;", conDataBase);
+			MySqlDataReader^ myReader;
+
+			try {
+				conDataBase->Open();
+				myReader = cmdDataBase->ExecuteReader();
+
+				while (myReader->Read())
+				 {
+					studToRemove = myReader->GetString("Studenti");
+					found = studToRemove->Contains(studentID);
+					if (found)
+					{
+						index = studToRemove->IndexOf(studentID);
+						studCatalog[n] = studToRemove->Remove(index, 3);
+						course[n++] = myReader->GetInt32("ID");
+					}	//retine cursurile la care e inscris studentul si ii sterge ID-ul
+				 }
+				}
+			catch (Exception^ ex)
+			{
+				MessageBox::Show(ex->Message);
+			}
+			conDataBase->Close();
+			myReader->Close();
+			//se inchice prima conexiune
+
+			conDataBase->Open();//se deschide conexiunea pentru a updata baza de date
+			MySqlDataReader^ update;
+			for (int i = 0; i < n; i++) {
+				try
+				{
+					MySqlCommand^ updateDataBase = gcnew MySqlCommand("update erasmus.catalog SET Studenti='" + studCatalog[i] + "' where ID=" + course[i] + ";",conDataBase);
+					update = updateDataBase->ExecuteReader();
+					update->Read();
+					update->Close();//se inchide reader-ul
+				}
+				catch (Exception^ ex)
+				{
+					MessageBox::Show(ex->Message);
+				}
+			}//for pentru a parcurge toate cursurile la care e inscris studentul care trebuie sters;
 		}
 			
 	private: String^ conString = L"datasource=localhost;port=3306;username=root;password=bobcrisaudir8;";
@@ -196,6 +252,7 @@ namespace ErasmusPRJ {
 		}
 #pragma endregion
 	private: System::Void Erasmus_Load(System::Object^  sender, System::EventArgs^  e) {
+		ShowButton->PerformClick();
 	}
 	private: System::Void ShowButton_Click(System::Object^  sender, System::EventArgs^  e) {
 		
@@ -222,11 +279,6 @@ private: System::Void SearchStudentTextBox_KeyDown(System::Object^  sender, Syst
 
 	if (e->KeyCode == Keys::Enter)
 	{
-		/*MySqlConnection^ conDataBase = gcnew MySqlConnection(conString);
-		MySqlCommand^ cmdDataBase = gcnew MySqlCommand("select ID,Nume,Prenume,Mail,Tara_provenienta,Catalog from erasmus.elevi where CNP='" + SearchStudentTextBox->Text + "';", conDataBase);
-		MySqlDataReader^ myReader;
-
-		ShowInDataGrid(cmdDataBase);*/
 		SearchButton->PerformClick();
 	}
 }
@@ -241,6 +293,7 @@ private: System::Void DeleteButton_Click(System::Object^  sender, System::EventA
 	if (EleviDataGrid->SelectedRows->Count > 0) {
 		int rowIndex = EleviDataGrid->CurrentCell->RowIndex;
 		String^ toDelete = EleviDataGrid->Rows[rowIndex]->Cells["ID"]->Value->ToString();
+		removeFromCourses(toDelete);
 		MySqlCommand^ cmdDataBase = gcnew MySqlCommand("delete from erasmus.elevi where ID='" + toDelete + "';", conDataBase);
 		MySqlDataReader^ myReader;
 
