@@ -137,30 +137,107 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddCatalog.cpp" />
     <ClCompile Include="AddStudent.cpp" />
+    <ClCompile Include="AddTara.cpp" />
+    <ClCompile Include="AddUniversitate.cpp" />
     <ClCompile Include="Erasmus.cpp" />
+    <ClCompile Include="ForgetPassword.cpp" />
+    <ClCompile Include="Login.cpp" />
+    <ClCompile Include="ResetPassword.cpp" />
+    <ClCompile Include="SendEmail.cpp" />
+    <ClCompile Include="ServerCredentials.cpp" />
+    <ClCompile Include="UpdateCatalog.cpp" />
     <ClCompile Include="UpdateStudent.cpp" />
+    <ClCompile Include="UpdateTara.cpp" />
+    <ClCompile Include="UpdateUniversitate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddCatalog.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="AddStudent.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="AddTara.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="AddUniversitate.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Erasmus.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="ForgetPassword.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="Login.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="ResetPassword.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="SendEmail.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="ServerCredentials.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="UpdateCatalog.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="UpdateStudent.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="UpdateTara.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="UpdateUniversitate.h">
       <FileType>CppForm</FileType>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AddCatalog.resx">
+      <DependentUpon>AddCatalog.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AddStudent.resx">
       <DependentUpon>AddStudent.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddTara.resx">
+      <DependentUpon>AddTara.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddUniversitate.resx">
+      <DependentUpon>AddUniversitate.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Erasmus.resx">
       <DependentUpon>Erasmus.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ForgetPassword.resx">
+      <DependentUpon>ForgetPassword.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResetPassword.resx">
+      <DependentUpon>ResetPassword.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SendEmail.resx">
+      <DependentUpon>SendEmail.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServerCredentials.resx">
+      <DependentUpon>ServerCredentials.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateCatalog.resx">
+      <DependentUpon>UpdateCatalog.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UpdateStudent.resx">
       <DependentUpon>UpdateStudent.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateTara.resx">
+      <DependentUpon>UpdateTara.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateUniversitate.resx">
+      <DependentUpon>UpdateUniversitate.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
