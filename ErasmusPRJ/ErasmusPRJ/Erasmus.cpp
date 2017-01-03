@@ -1,4 +1,4 @@
-#include "Erasmus.h"
+#include "Login.h"
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -10,6 +10,6 @@ void Main()
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
-	ErasmusPRJ::Erasmus form;
+	ErasmusPRJ::Login form;
 	Application::Run(%form);
 }

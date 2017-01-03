@@ -1,8 +1,14 @@
 ﻿  Erasmus.cpp
-d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(261): warning C4101: 'myReader': unreferenced local variable
-d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(274): warning C4101: 'myReader': unreferenced local variable
-  UpdateStudent.cpp
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(644): warning C4101: 'myReader': unreferenced local variable
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(657): warning C4101: 'myReader': unreferenced local variable
+  ForgetPassword.cpp
+  Login.cpp
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(644): warning C4101: 'myReader': unreferenced local variable
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\Erasmus.h(657): warning C4101: 'myReader': unreferenced local variable
+  SendEmail.cpp
   Generating Code...
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(156): warning C4715: 'ErasmusPRJ::AddStudent::getUni': not all control paths return a value
+d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(228): warning C4715: 'ErasmusPRJ::AddStudent::getLastID': not all control paths return a value
 d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\updatestudent.h(142): warning C4715: 'ErasmusPRJ::UpdateStudent::getCode': not all control paths return a value
 d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\updatestudent.h(298): warning C4715: 'ErasmusPRJ::UpdateStudent::getUni': not all control paths return a value
 d:\scoala\anul2\sem1\poo\proiect\test\interfata final\erasmusprj\erasmusprj\addstudent.h(156): warning C4715: 'ErasmusPRJ::AddStudent::getUni': not all control paths return a value
