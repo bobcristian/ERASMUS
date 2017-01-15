@@ -1,16 +1,16 @@
-"ID";"Nume_tara";"Cod_tara"
-1;"Bulgaria";"BG"
-2;"Croatia";"HR"
-3;"Franta";"F"
-4;"Germania";"D"
-5;"Grecia";"G"
-6;"Italia";"I"
-7;"Marea Britanie";"UK"
-8;"Polonia";"PL"
-9;"Portugalia";"P"
-10;"Slovacia";"SK"
-11;"Slovenia";"SI"
-12;"Spania";"E"
-13;"Suedia";"S"
-14;"Turcia";"TR"
-15;"Ungaria";"HU"
+ID,Cod_tara,Nume_tara
+1,BG,Bulgaria
+2,HR,Croatia
+3,F,Franta
+4,D,Germania
+5,G,Grecia
+6,I,Italia
+7,UK,"Marea Britanie"
+8,PL,Polonia
+9,P,Portugalia
+10,SK,Slovacia
+11,SI,Slovenia
+12,E,Spania
+13,S,Suedia
+14,TR,Turcia
+15,HU,Ungaria
