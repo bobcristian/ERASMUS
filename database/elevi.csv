@@ -1,2 +1,4 @@
-"ID";"Nume";"Prenume";"Data_nastere";"Tara_provenienta";"Mail";"Universitate_prov";"Catalog";"Durata_stagiu";"Semestru";"Observatii";"Facultatea"
-98;"ASD";"";"--";"";"";"";"General Chemistry/Computer Programming 1/English language/Sport/Sport/";3.0;1;"";""
+ID,Nume,Prenume,Data_nastere,Tara_provenienta,Mail,Universitate_prov,Catalog,Durata_stagiu,Semestru,Observatii,Facultatea
+101,ASFAS,,--,,,,"Technical Mechanic/Mathematics 1/Intercultural Cooperation/",3,1,,
+102,BOB,Cristian,1996-4-12,Italia,bobcristian96@yahoo.com,"Politecnico di Milano","Technical Mechanic/Mathematics 1/General Chemistry/Computer Programming 1/English language/Technical Drawing/",3,1,,ACS
+103,VOINEA,Diana,1996-6-18,Spania,dianacristina96@yahoo.com,"Universidad Politecnica de Madrid","Technical Mechanic/Mathematics 1/General Chemistry/Computer Programming 1/English language/",3,1,"E tare draguta si hazlie :)",Litere
